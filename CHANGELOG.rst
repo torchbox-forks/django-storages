@@ -1,6 +1,16 @@
 django-storages CHANGELOG
 =========================
 
+1.14.3+tbx (2024-03-01)
+***********************
+
+Azure
+-----
+
+- Raise ``FileNotFoundError`` when requested blob is missing from Azure storage (`#1`_)
+
+.. _#1: https://github.com/torchbox-forks/django-storages/pull/1
+
 1.14.2 (2023-10-08)
 *******************
 
