@@ -46,7 +46,7 @@ Authentication Settings
 
 Several different methods of authentication are provided. In order of precedence they are:
 
-#. ``connection_string`` or ``AZURE_CONNECTION_STRING`` (see `Connection string docs <https://azure.microsoft.com/documentation/articles/storage-configure-connection-string/>`_)
+#. ``connection_string`` or ``AZURE_CONNECTION_STRING`` (see `Connection string docs <https://learn.microsoft.com/en-us/azure/storage/common/storage-configure-connection-string>`_)
 #. (``account_key`` or ``AZURE_ACCOUNT_KEY``) and (``account_name`` or ``AZURE_ACCOUNT_NAME``)
 #. ``token_credential`` or ``AZURE_TOKEN_CREDENTIAL`` with ``account_name`` or ``AZURE_ACCOUNT_NAME``
 #. ``sas_token`` or ``AZURE_SAS_TOKEN``
@@ -123,7 +123,7 @@ Settings
 
   Global connection timeout in seconds.
 
-``max_memory`` size ``AZURE_BLOB_MAX_MEMORY_SIZE``
+``max_memory_size`` or ``AZURE_BLOB_MAX_MEMORY_SIZE``
 
   Default: ``2*1024*1024`` i.e ``2MB``
 
@@ -185,9 +185,21 @@ Settings
 
   This is a Python ``dict`` and the possible parameters are: ``content_type``, ``content_encoding``, ``content_language``, ``content_disposition``, ``cache_control``, and ``content_md5``.
 
+``client_options`` or ``AZURE_CLIENT_OPTIONS``
+
+  Default: ``{}``
+
+  A dict of kwarg options to send to the ``BlobServiceClient``. A partial list of options can be found
+  `in the client docs <https://learn.microsoft.com/en-us/python/api/azure-storage-blob/azure.storage.blob.blobserviceclient?view=azure-python#keyword-only-parameters>`__.
+
+  Additionally, this setting can be used to configure the client retry settings. To see how follow the
+  `Python retry docs <https://learn.microsoft.com/en-us/azure/storage/blobs/storage-retry-policy-python>`__.
+
 ``api_version`` or ``AZURE_API_VERSION``
 
   Default: ``None``
+
+  **Note: This option is deprecated. Use client_options/AZURE_CLIENT_OPTIONS instead.**
 
   The Azure Storage API version to use. Default value is the most recent service version that is compatible with the current SDK.
   Setting to an older version may result in reduced feature compatibility.

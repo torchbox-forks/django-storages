@@ -311,6 +311,8 @@ class S3Storage(CompressStorageMixin, BaseStorage):
     # settings/args are ignored.
     config = None
 
+    _signers = {}  # noqa: RUF012
+
     def __init__(self, **settings):
         omitted = object()
         if not hasattr(self, "cloudfront_signer"):
@@ -372,7 +374,12 @@ class S3Storage(CompressStorageMixin, BaseStorage):
                 self.cloudfront_signer = None
 
     def get_cloudfront_signer(self, key_id, key):
-        return _cloud_front_signer_from_pem(key_id, key)
+        cache_key = f"{key_id}:{key}"
+        if cache_key not in self.__class__._signers:
+            self.__class__._signers[cache_key] = _cloud_front_signer_from_pem(
+                key_id, key
+            )
+        return self.__class__._signers[cache_key]
 
     def get_default_settings(self):
         return {
@@ -574,8 +581,11 @@ class S3Storage(CompressStorageMixin, BaseStorage):
 
     def exists(self, name):
         name = self._normalize_name(clean_name(name))
+        params = _filter_download_params(self.get_object_parameters(name))
         try:
-            self.connection.meta.client.head_object(Bucket=self.bucket_name, Key=name)
+            self.connection.meta.client.head_object(
+                Bucket=self.bucket_name, Key=name, **params
+            )
             return True
         except ClientError as err:
             if err.response["ResponseMetadata"]["HTTPStatusCode"] == 404:

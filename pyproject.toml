@@ -23,6 +23,7 @@ classifiers = [
   "Framework :: Django :: 4.1",
   "Framework :: Django :: 4.2",
   "Framework :: Django :: 5.0",
+  "Framework :: Django :: 5.1",
   "Intended Audience :: Developers",
   "License :: OSI Approved :: BSD License",
   "Operating System :: OS Independent",
@@ -51,10 +52,10 @@ boto3 = [
   "boto3>=1.4.4",
 ]
 dropbox = [
-  "dropbox>=7.2.1; python_version<'3.12'",
+  "dropbox>=7.2.1",
 ]
 google = [
-  "google-cloud-storage>=1.27",
+  "google-cloud-storage>=1.36.1",
 ]
 libcloud = [
   "apache-libcloud",

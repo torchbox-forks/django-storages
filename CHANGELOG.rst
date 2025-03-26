@@ -1,8 +1,55 @@
 django-storages CHANGELOG
 =========================
 
-UNRELEASED
-**********
+1.14.5 (2025-02-15)
+*******************
+
+General
+-------
+
+- Revert ``exists()`` behavior to pre-1.14.4 semantics with additional hardening for Django versions < 4.2 to fix
+  CVE-2024-39330. This change matches the eventual behavior Django itself shipped with. (`#1484`_, `#1486`_)
+- Add support for Django 5.1 (`#1444`_)
+
+Azure
+-----
+
+- **Deprecated**: The setting ``AZURE_API_VERSION/api_version`` setting is deprecated in favor of
+  the new ``AZURE_CLIENT_OPTIONS`` setting. A future version will remove support for this setting.
+- Add ``AZURE_CLIENT_OPTIONS`` settings to enable customization of all ``BlobServiceClient`` parameters
+  such as ``api_version`` and all ``retry*`` options. (`#1432`_)
+
+Dropbox
+-------
+
+- As part of the above hardening fix a bug was uncovered whereby a ``root_path`` setting would be applied
+  multiple times during ``save()`` (`#1484`_)
+- Fix setting OAuth2 access token via env var (`#1452`_)
+
+FTP
+---
+
+- Fix incorrect ``exists()`` results due to an errant appended slash (`#1438`_)
+
+Google Cloud
+------------
+
+- Switch checksum to ``crc32c`` to fix downloading when running in FIPS mode (`#1473`_)
+- Fix double decompression when using ``gzip`` (`#1457`_)
+
+
+.. _#1484: https://github.com/jschneier/django-storages/pull/1484
+.. _#1486: https://github.com/jschneier/django-storages/pull/1486
+.. _#1444: https://github.com/jschneier/django-storages/pull/1444
+.. _#1432: https://github.com/jschneier/django-storages/pull/1432
+.. _#1473: https://github.com/jschneier/django-storages/pull/1473
+.. _#1457: https://github.com/jschneier/django-storages/pull/1457
+.. _#1452: https://github.com/jschneier/django-storages/pull/1452
+.. _#1438: https://github.com/jschneier/django-storages/pull/1438
+
+
+1.14.4 (2024-07-09)
+*******************
 
 S3
 --
@@ -10,10 +57,42 @@ S3
 - Pull ``AWS_SESSION_TOKEN`` from the environment (`#1399`_)
 - Fix newline handling for text mode files (`#1381`_)
 - Do not sign URLs when ``querystring_auth=False`` e.g public buckets or static files (`#1402`_)
+- Cache CloudFront Signers (`#1417`_)
+
+Azure
+-----
+
+- Fix ``collectstatic --clear`` (`#1403`_)
+- Add ``mode`` kwarg to ``.url()`` to support creation of signed URLs for upload (`#1414`_)
+- Fix fetching user delegation key when custom domain is enabled (`#1418`_)
+
+SFTP
+----
+
+- Add implementations of ``get_(modified|accessed)_time`` (`#1347`_)
+
+Dropbox
+-------
+
+- Add support for Python 3.12 (`#1421`_)
+
+FTP
+---
+
+- Conform to ``BaseStorage`` interface (`#1423`_)
+- Add ``FTP_ALLOW_OVERWRITE`` setting (`#1424`_)
 
 .. _#1399: https://github.com/jschneier/django-storages/pull/1399
 .. _#1381: https://github.com/jschneier/django-storages/pull/1381
 .. _#1402: https://github.com/jschneier/django-storages/pull/1402
+.. _#1403: https://github.com/jschneier/django-storages/pull/1403
+.. _#1414: https://github.com/jschneier/django-storages/pull/1414
+.. _#1417: https://github.com/jschneier/django-storages/pull/1417
+.. _#1418: https://github.com/jschneier/django-storages/pull/1418
+.. _#1347: https://github.com/jschneier/django-storages/pull/1347
+.. _#1421: https://github.com/jschneier/django-storages/pull/1421
+.. _#1423: https://github.com/jschneier/django-storages/pull/1423
+.. _#1424: https://github.com/jschneier/django-storages/pull/1424
 
 
 1.14.3 (2024-05-04)

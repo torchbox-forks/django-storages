@@ -1,19 +1,12 @@
 import io
-import sys
 from datetime import datetime
-from unittest import SkipTest
 from unittest import mock
-
-if sys.version_info >= (3, 12, 0):
-    raise SkipTest(
-        "dropbox library does not support Python 3.12+. "
-        "Skipping all tests in test_dropbox.py"
-    )
 
 from django.core.exceptions import ImproperlyConfigured
 from django.core.exceptions import SuspiciousFileOperation
 from django.core.files.base import File
 from django.test import TestCase
+from django.test import override_settings
 from dropbox.files import FileMetadata
 from dropbox.files import FolderMetadata
 from dropbox.files import GetTemporaryLinkResult
@@ -61,6 +54,11 @@ class DropboxTest(TestCase):
     def test_no_access_token(self, *args):
         with self.assertRaises(ImproperlyConfigured):
             dropbox.DropboxStorage(None)
+
+    def test_setting_access_token(self):
+        with override_settings(DROPBOX_OAUTH2_TOKEN="abc"):
+            storage = dropbox.DropboxStorage()
+            self.assertEqual(storage.oauth2_access_token, "abc")
 
     def test_refresh_token_app_key_no_app_secret(self, *args):
         inputs = {
