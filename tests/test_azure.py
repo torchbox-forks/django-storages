@@ -3,6 +3,7 @@ from datetime import timedelta
 from unittest import mock
 
 import django
+from azure.core.exceptions import ResourceNotFoundError
 from azure.storage.blob import BlobProperties
 from django.core.exceptions import SuspiciousOperation
 from django.core.files.base import ContentFile
@@ -437,9 +438,11 @@ class AzureStorageTest(TestCase):
             )
 
     def test_missing_file_handling(self):
-        client_mock = mock.MagicMock()
-        client_mock.exists.side_effect = [True, False]
-        self.storage._client.get_blob_client.return_value = client_mock
+        download_mock = mock.MagicMock()
+        self.storage._client.download_blob.side_effect = [
+            download_mock,
+            ResourceNotFoundError,
+        ]
 
         with self.storage.open('file-that-exists') as file_that_exists:
             self.assertIsInstance(file_that_exists, azure_storage.AzureStorageFile)

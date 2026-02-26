@@ -35,6 +35,9 @@ class AzureStorageFile(File):
         self._is_dirty = False
         self._file = None
         self._path = storage._get_valid_path(name)
+        if "r" in mode or "a" in mode:
+            # Force early RAII-style exception if the blob does not exist
+            self.file  # noqa: B018
 
     def _get_file(self):
         if self._file is not None:
@@ -239,9 +242,10 @@ class AzureStorage(BaseStorage):
         return _get_valid_path(self._normalize_name(clean_name(name)))
 
     def _open(self, name, mode="rb"):
-        if not self.exists(name):
-            raise FileNotFoundError('File does not exist: %s' % name)
-        return AzureStorageFile(name, mode, self)
+        try:
+            return AzureStorageFile(name, mode, self)
+        except ResourceNotFoundError:
+            raise FileNotFoundError("File does not exist: %s" % name)
 
     def get_available_name(self, name, max_length=_AZURE_NAME_MAX_LEN):
         """
